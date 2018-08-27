@@ -1,0 +1,100 @@
+<nz-card [nzBordered]="false">
+	<form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form">
+		<nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+			<nz-col nzMd="8" nzSm="24">
+				<nz-form-item>
+					<nz-form-label nzFor="db_type">数据库</nz-form-label>
+					<nz-form-control>
+						<nz-select [(ngModel)]="q.db_type" name="db_type" id="db_type" [nzPlaceHolder]="'请选择数据库'">
+							<nz-option *ngFor="let i of dbInstances" [nzValue]="i.db_type" [nzLabel]="i.db_type"></nz-option>
+						</nz-select>
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col nzMd="8" nzSm="24">
+				<nz-form-item>
+					<nz-form-label nzFor="table_name_search_key">表名</nz-form-label>
+					<nz-form-control>
+						<input [(ngModel)]="q.table_name_search_key" placeholder="请输入表名，支持模糊查询" name="table_name_search_key" nz-input id="table_name_search_key">
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col [nzSpan]="24" [class.text-right]="true">
+				<button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+				<button nz-button type="reset" class="mx-sm">重置</button>
+			</nz-col>
+		</nz-row>
+	</form>
+	<div class="my-md">
+		<button nz-button (click)="add()" [nzType]="'primary'">
+		    <i class="anticon anticon-plus"></i>
+		    <span>新建</span>
+  		</button>
+  		<button nz-button (click)="flushToKafka()" [nzType]="'dashed'">
+		    <span>立即生效</span>
+  		</button>
+	</div>
+	<simple-table #st (change)="onChange()" [frontPagination]=false [showPagination]=true [data]="data" [total]="total" [columns]="columns">
+		<ng-template st-row="table_biz" let-item>
+			<nz-select style="width:250px" *ngIf="item.edit" [(ngModel)]="item.table_biz_name" (ngModelChange)="switchTableBizType(item)">
+				<nz-option *ngFor="let i of binlogBiz" [nzLabel]="i.table_biz" [nzValue]="i.table_biz_name"></nz-option>
+			</nz-select>
+			<td class="ng-star-inserted" *ngIf="!item.edit">{{item.table_biz}}</td>
+		</ng-template>
+		<ng-template st-row="operation" let-item>
+			<a (click)="item.edit=true" *ngIf="!item.edit">编辑</a>
+			<nz-divider [nzType]="vertical" *ngIf="!item.edit"></nz-divider>
+			<a (click)="saveEdit(item)" *ngIf="item.edit && item.changed">保存修改</a>
+			<span *ngIf="item.edit && !item.changed">保存修改</span>
+			<nz-divider [nzType]="vertical" *ngIf="item.edit"></nz-divider>
+			<a (click)="dropEdit(item)" *ngIf="item.edit">放弃修改</a>
+			<nz-divider [nzType]="vertical" *ngIf="item.edit"></nz-divider>
+			<a nz-popconfirm nzTitle="确认删除吗?" (nzOnConfirm)="onDelete(item)">删除</a>
+		</ng-template>
+	</simple-table>
+</nz-card>
+
+<nz-modal [(nzVisible)]="showAddModal" [nzTitle]="addModalTitle" [nzContent]="addModalContent" [nzFooter]="addModalFooter" (nzOnCancel)="handleCancel()">
+	<ng-template #addModalTitle>
+		新建binlog表监控
+	</ng-template>
+	<ng-template #addModalContent>
+		<nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+		<nz-col nzMd="24" nzSm="24">
+			<nz-form-item>
+				<nz-form-label nzFor="no">数据库</nz-form-label>
+				<nz-form-control>
+					<nz-select style="width:250px" [nzPlaceHolder]="'请选择数据库'" [(ngModel)]="newTableModel.db_type">
+						<nz-option *ngFor="let i of dbInstances" [nzLabel]="i.db_type" [nzValue]="i.db_type"></nz-option>
+					</nz-select>
+				</nz-form-control>
+			</nz-form-item>
+		</nz-col>
+	</nz-row>
+	<nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+		<nz-col nzMd="24" nzSm="24">
+			<nz-form-item>
+				<nz-form-label nzFor="no">业务类型</nz-form-label>
+				<nz-form-control>
+					<nz-select style="width:250px" [nzPlaceHolder]="'请选择业务类型'" [(ngModel)]="newTableModel.table_biz_name">
+						<nz-option *ngFor="let i of binlogBiz" [nzLabel]="i.table_biz" [nzValue]="i.table_biz_name"></nz-option>
+					</nz-select>
+				</nz-form-control>
+			</nz-form-item>
+		</nz-col>
+	</nz-row>
+	<nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+		<nz-col nzMd="24" nzSm="24">
+			<nz-form-item>
+				<nz-form-label nzFor="no">表名</nz-form-label>
+				<nz-form-control>
+					<input nz-input [(ngModel)]="newTableModel.table_name" name="table_name" placeholder="请输入需要监听的表" id="table_name">
+				</nz-form-control>
+			</nz-form-item>
+		</nz-col>
+	</nz-row>
+	</ng-template>
+	<ng-template #addModalFooter>
+		<button nz-button nzType="primary" (click)="handleOk()" [disabled]="!newTableModel.table_name || newTableModel.table_biz_name==null || !newTableModel.db_type">添加</button>
+	</ng-template>
+</nz-modal>

@@ -1,0 +1,72 @@
+<nz-card [nzBordered]='false' *ngIf="deployProject">
+	<nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+		<nz-col nzMd="8" nzSm="24">
+			<nz-form-item>
+				<nz-form-label nzFor="project_name">项目名称</nz-form-label>
+				<nz-form-control>
+					<nz-select style="width:300px" [(ngModel)]="deployProjectName" name="deployProjectName" id="deployProjectName" [nzPlaceHolder]="'请选择要发布的项目'" [nzShowSearch]="true">
+						<nz-option *ngFor="let i of deployProjects" [nzLabel]="i.project_name" [nzValue]="i.project_name"></nz-option>
+					</nz-select>
+					<nz-upload [nzBeforeUpload]="beforeUpload">
+						<button nz-button>
+							<i class="anticon anticon-upload"></i><span>浏览</span>
+						</button>
+					</nz-upload>
+					<button nz-button [nzType]="'primary'" [nzLoading]="uploading" (click)="handleUpload()" [disabled]="file==null" style="margin-top: 16px">
+    					{{ uploading ? '上传中' : '上传' }}
+  					</button>
+					<button nz-button (click)="returnHome()" [nzType]="'primary'">
+	    				<span>返回发布进度查询页</span>
+  					</button>
+				</nz-form-control>
+			</nz-form-item>
+		</nz-col>
+	</nz-row>
+
+</nz-card>
+
+<nz-card [nzBordered]="false" *ngIf="!deployProject">
+	<form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form">
+		<nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+			<nz-col nzMd="8" nzSm="24">
+				<nz-form-item>
+					<nz-form-label nzFor="project_name">项目名称</nz-form-label>
+					<nz-form-control>
+						<nz-select [(ngModel)]="q.project_name" name="project_name" id="project_name" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
+							<nz-option *ngFor="let i of deployProjects" [nzLabel]="i.project_name" [nzValue]="i.project_name"></nz-option>
+						</nz-select>
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col nzMd="8" nzSm="24">
+				<nz-form-item>
+					<nz-form-label nzFor="success">同步结果</nz-form-label>
+					<nz-form-control>
+						<nz-select [(ngModel)]="q.success" name="success" id="success" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
+							<nz-option *ngFor="let i of status" [nzLabel]="i.text" [nzValue]="i.value"></nz-option>
+						</nz-select>
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col nzMd="8" nzSm="24">
+				<button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+				<button nz-button type="reset" class="mx-sm">重置</button>
+			</nz-col>
+		</nz-row>
+	</form>
+	<button nz-button (click)="jumpToDeploy()" [nzType]="'primary'">
+	    <i class="anticon anticon-plus"></i>
+	    <span>发布pos离线项目</span>
+	</button>
+	<div class="my-md">
+		<nz-alert [nzType]="'info'" [nzShowIcon]="true" [nzMessage]="message">
+			<ng-template #message>
+				同步成功数
+				<strong>{{data.success_total}}</strong> 项&nbsp;&nbsp; 同步失败数
+				<strong class="text-primary">{{data.failed_total}}</strong> 项&nbsp;&nbsp; 同步超时数
+				<strong class="text-primary">{{data.timeout_total}}</strong> 项&nbsp;&nbsp;
+			</ng-template>
+		</nz-alert>
+	</div>
+	<simple-table #st [data]="data.models" [total]="total" (change)="onChange()" [frontPagination]=false [showPagination]=true [columns]="columns"></simple-table>
+</nz-card>

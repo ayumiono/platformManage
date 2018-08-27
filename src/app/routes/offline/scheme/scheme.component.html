@@ -1,0 +1,99 @@
+<nz-card [nzBordered]="false">
+	<form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form">
+		<nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+			<nz-col nzMd="8" nzSm="24">
+				<nz-form-item>
+					<nz-form-label nzFor="database_ip_search_key">数据库描述</nz-form-label>
+					<nz-form-control>
+						<input [(ngModel)]='q.database_ip_search_key' name='database_ip_search_key' nz-input id="database_ip_search_key">
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+				<nz-form-item>
+					<nz-form-label nzFor="schema_search_key">数据库名</nz-form-label>
+					<nz-form-control>
+						<input [(ngModel)]='q.schema_search_key' name='schema_search_key' nz-input id="schema_search_key">
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+				<nz-form-item>
+					<nz-form-label nzFor="table_name_search_key">表名</nz-form-label>
+					<nz-form-control>
+						<input [(ngModel)]='q.table_name_search_key' name='table_name_search_key' nz-input id="table_name_search_key">
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col [nzSpan]="expandForm ? 24 : 8" [class.text-right]="expandForm">
+				<button nz-button type="submit" [nzType]="'primary'">查询</button>
+				<button nz-button type="reset" class="mx-sm">重置</button>
+				<a (click)="expandForm=!expandForm">
+					{{expandForm ? '收起' : '展开'}}
+					<i class="anticon" [class.anticon-down]="!expandForm" [class.anticon-up]="expandForm"></i>
+				</a>
+			</nz-col>
+		</nz-row>
+	</form>
+	<div class="my-md">
+		<button nz-button (click)="add()" [nzType]="'primary'">
+		    <i class="anticon anticon-plus"></i>
+		    <span>新建</span>
+  		</button>
+	</div>
+	<simple-table #st [data]="data" [total]="total" (change)="onChange()" [frontPagination]=false [showPagination]=true [columns]="columns">
+		<ng-template st-row="posBizType" let-item>
+			<nz-form-control>
+				<nz-select style="width:250px" *ngIf="item.edit" [(ngModel)]="item.sql_param_id" name="sql_param_id" (ngModelChange)="switchPosBizType(item)">
+					<nz-option *ngFor="let i of posBizTypeEnum" [nzLabel]="i.sql_param_content" [nzValue]="i.sql_param_id"></nz-option>
+				</nz-select>
+				<td class="ng-star-inserted" *ngIf="!item.edit">{{mapSqlParamContent(item.sql_param_id)}}</td>
+			</nz-form-control>
+		</ng-template>
+		<ng-template st-row="operation" let-item>
+			<a (click)="item.edit=true" *ngIf="!item.edit">编辑</a>
+			<nz-divider [nzType]="vertical" *ngIf="!item.edit"></nz-divider>
+			<a (click)="saveEdit(item)" *ngIf="item.edit && item.changed">保存修改</a>
+			<span *ngIf="item.edit && !item.changed">保存修改</span>
+			<nz-divider [nzType]="vertical" *ngIf="item.edit"></nz-divider>
+			<a (click)="dropEdit(item)" *ngIf="item.edit">放弃修改</a>
+			<nz-divider [nzType]="vertical" *ngIf="item.edit"></nz-divider>
+			<a nz-popconfirm nzTitle="确认删除吗?" (nzOnConfirm)="deleteTable(item)">删除</a>
+		</ng-template>
+	</simple-table>
+</nz-card>
+
+<nz-modal [(nzVisible)]="showAddModal" [nzTitle]="addModalTitle" [nzContent]="addModalContent" [nzFooter]="addModalFooter" (nzOnCancel)="handleCancel()">
+	<ng-template #addModalTitle>
+		新建pos离线系统表监听
+	</ng-template>
+	<ng-template #addModalContent>
+		<nz-form-item>
+			<nz-form-label nzFor="no">数据库</nz-form-label>
+			<nz-form-control>
+				<nz-select style="width:400px" [(ngModel)]="newOfflinePosTable.schema_name" name="table_name" id="table_name" [nzPlaceHolder]="'请选择数据库'">
+					<nz-option *ngFor="let i of dbInstances" [nzValue]="i.db_type" [nzLabel]="i.db_type"></nz-option>
+				</nz-select>
+			</nz-form-control>
+		</nz-form-item>
+		<nz-form-item>
+			<nz-form-label nzFor="no">数据表</nz-form-label>
+			<nz-form-control>
+				<nz-select nzMode="tags" nzMaxMultipleCount="1" style="width:400px" [(ngModel)]="newOfflinePosTable.table_name" name="table_name" id="table_name" [nzPlaceHolder]="'请选择数据表'" (nzOpenChange)="getTablesInThisDB()">
+					<nz-option *ngFor="let i of tables" [nzValue]="i" [nzLabel]="i"></nz-option>
+				</nz-select>
+			</nz-form-control>
+		</nz-form-item>
+		<nz-form-item>
+			<nz-form-label nzFor="no">同步业务</nz-form-label>
+			<nz-form-control>
+				<nz-select style="width:400px" [(ngModel)]="newOfflinePosTable.sql_param_id" name="sql_param_id" id="sql_param_id" [nzPlaceHolder]="'请选择同步业务类型'">
+					<nz-option *ngFor="let i of posBizTypeEnum" [nzLabel]="i.sql_param_content" [nzValue]="i.sql_param_id"></nz-option>
+				</nz-select>
+			</nz-form-control>
+		</nz-form-item>
+	</ng-template>
+	<ng-template #addModalFooter>
+		<button nz-button nzType="primary" (click)="handleOk()" [disabled]="!newOfflinePosTable.table_name || newOfflinePosTable.sql_param_id==null || !newOfflinePosTable.schema_name">添加</button>
+	</ng-template>
+</nz-modal>

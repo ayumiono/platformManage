@@ -1,0 +1,19 @@
+{
+	"results":[
+		{
+			"table_name":"mdms_p_product_barcode_shop",
+			"sync_biz":"向redis刷新主键",
+			"biz_topic":"CANAL_002"
+		},
+		{
+			"table_name":"mdms_p_product_barcode_shop",
+			"sync_biz":"向redis刷新主键",
+			"biz_topic":"CANAL_002"
+		},
+		{
+			"table_name":"mdms_p_product_barcode_shop",
+			"sync_biz":"同步到pos门店",
+			"biz_topic":"CANAL_002"
+		}
+	]
+}

@@ -1,0 +1,41 @@
+<nz-card [nzBordered]='false'>
+	<form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form">
+		<nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+			<nz-col nzMd="8" nzSm="24">
+				<nz-form-item>
+					<nz-form-label nzFor="project_name">系统名</nz-form-label>
+					<nz-form-control>
+						<nz-select [(ngModel)]="q.system_name" name="system_name" id="system_name" [nzPlaceHolder]="'请选择系统'" [nzShowSearch]="true">
+							<nz-option *ngFor="let i of systems" [nzLabel]="i.text" [nzValue]="i.value"></nz-option>
+						</nz-select>
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col nzMd="8" nzSm="24">
+				<nz-form-item>
+					<nz-form-label nzFor="success">topic</nz-form-label>
+					<nz-form-control>
+						<nz-select name="topic" id="topic" [nzPlaceHolder]="'请选择topic'" [nzShowSearch]="true">
+							<nz-option *ngFor="let i of topics" [nzLabel]="i.text" [nzValue]="i.value"></nz-option>
+						</nz-select>
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col nzMd="8" nzSm="24">
+				<nz-form-item>
+					<nz-form-label nzFor="success">tag</nz-form-label>
+					<nz-form-control>
+						<nz-select name="tag" id="tag" [nzPlaceHolder]="'请选择tag'" [nzShowSearch]="true">
+							<nz-option *ngFor="let i of tags" [nzLabel]="i.text" [nzValue]="i.value"></nz-option>
+						</nz-select>
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col nzMd="8" nzSm="24">
+				<button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+				<button nz-button type="reset" class="mx-sm">重置</button>
+			</nz-col>
+		</nz-row>
+	</form>
+	<simple-table #st [data]="data" [total]="total" (change)="onChange()" [frontPagination]=false [showPagination]=true [columns]="columns"></simple-table>
+</nz-card>

@@ -1,0 +1,63 @@
+<nz-card [nzBordered]="false">
+	<form [formGroup]="queryForm" nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form">
+		<nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+			<nz-col nzMd="8" nzSm="24">
+				<nz-form-item>
+					<nz-form-label nzFor="query_shop_sub_unit_num_id">门店编号</nz-form-label>
+					<nz-form-control>
+						<input formControlName="query_shop_sub_unit_num_id" name='query_shop_sub_unit_num_id' nz-input id="query_shop_sub_unit_num_id">
+						<nz-form-explain *ngIf="query_shop_sub_unit_num_id.dirty && query_shop_sub_unit_num_id.errors">门店编号不能为空且必须为数字</nz-form-explain>
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col nzMd="8" nzSm="24">
+				<nz-form-item>
+					<nz-form-label nzFor="query_shop_shop_name_serach_key">门店名</nz-form-label>
+					<nz-form-control>
+						<input formControlName="query_shop_shop_name_serach_key" name='query_shop_shop_name_serach_key' nz-input id="query_shop_shop_name_serach_key">
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col nzMd="8" nzSm="24">
+				<button nz-button type="submit" [nzType]="'primary'">查询</button>
+				<button nz-button type="reset" class="mx-sm">重置</button>
+			</nz-col>
+		</nz-row>
+	</form>
+	<div class="my-md">
+		<button nz-button (click)="add()" [nzType]="'primary'">
+		    <i class="anticon anticon-plus"></i>
+		    <span>新建</span>
+  		</button>
+	</div>
+	
+	<simple-table #st [scroll]="{x: '1600px'}" [data]="data" [total]="total" (change)="onChange()" [frontPagination]=false [showPagination]=true [columns]="columns">
+	</simple-table>
+</nz-card>
+
+<nz-modal [(nzVisible)]="showAddModal" [nzTitle]="addModalTitle" [nzContent]="addModalContent" [nzFooter]="addModalFooter" (nzOnCancel)="handleCancel()">
+	<ng-template #addModalTitle>
+		增加离线pos门店
+	</ng-template>
+	<ng-template #addModalContent>
+		<form [formGroup]="addForm" nz-form [nzLayout]="'inline'" class="search__form">
+			<nz-form-item>
+				<nz-form-label [nzSm]="8" [nzXs]="24" nzFor="sub_unit_num_id" nzRequired>门店编号</nz-form-label>
+				<nz-form-control [nzSm]="16" [nzXs]="24">
+					<input formControlName="add_shop_sub_unit_num_id" name='add_shop_sub_unit_num_id' nz-input id="add_shop_sub_unit_num_id">
+					<nz-form-explain *ngIf="add_shop_sub_unit_num_id.dirty && add_shop_sub_unit_num_id.errors">门店编号不能为空且必须为数字</nz-form-explain>
+				</nz-form-control>
+			</nz-form-item>
+			<nz-form-item>
+				<nz-form-label [nzSm]="8" [nzXs]="24" nzFor="shop_name" nzRequired>门店名</nz-form-label>
+				<nz-form-control [nzSm]="16" [nzXs]="24">
+					<input formControlName="add_shop_shop_name" name='add_shop_shop_name' nz-input id="add_shop_shop_name">
+					<nz-form-explain *ngIf="add_shop_shop_name.dirty && add_shop_shop_name.errors">门店名不能为空</nz-form-explain>
+				</nz-form-control>
+			</nz-form-item>
+		</form>
+	</ng-template>
+	<ng-template #addModalFooter>
+		<button nz-button nzType="primary" (click)="handleOk()" [disabled]="add_shop_sub_unit_num_id.value==null || add_shop_shop_name.value==null">添加</button>
+	</ng-template>
+</nz-modal>

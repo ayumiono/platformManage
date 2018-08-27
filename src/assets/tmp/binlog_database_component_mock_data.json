@@ -1,0 +1,19 @@
+{
+	"results":[
+		{
+			"description":"商户基础档案数据库192.168.26.186",
+			"schema":"tenantdoss01",
+			"type":"tenantDossier"
+		},
+		{
+			"description":"商户基础档案数据库192.168.26.186",
+			"schema":"tenantdoss01",
+			"type":"tenantDossier"
+		},
+		{
+			"description":"商户基础档案数据库192.168.26.186",
+			"schema":"tenantdoss01",
+			"type":"tenantDossier"
+		}
+	]
+}

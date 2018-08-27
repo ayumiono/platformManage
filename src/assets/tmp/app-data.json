@@ -1,0 +1,127 @@
+{
+	"app": {
+		"name": "GB Manager",
+		"description": "Ng-zorro admin panel front-end framework"
+	},
+	"user": {
+		"name": "Admin",
+		"avatar": "./assets/tmp/img/avatar.jpg",
+		"email": "cipchk@qq.com"
+	},
+	"menu": [
+		{
+			"text": "主导航",
+			"i18n": "main_navigation",
+			"group": true,
+			"hideInBreadcrumb": true,
+			"children": [
+				{
+					"text": "离线pos监控",
+					"i18n": "offline_monitor",
+					"icon": "icon-speedometer",
+					"children": [
+						{
+							"text": "门店版本快照",
+							"link": "/offline/version_snapshot",
+							"i18n": "offline_version_snapshot",
+							"reuse":true
+						},
+						{
+							"text": "离线同步表管理",
+							"link": "/offline/scheme",
+							"i18n": "scheme_setting",
+							"reuse":true
+						}, {
+							"text": "门店信息",
+							"link": "/offline/shop",
+							"i18n": "shop_info"
+						}, {
+							"text": "门店项目发布进度",
+							"link": "/offline/deploy_progress",
+							"i18n": "offline_deploy_progress"
+						}
+					]
+				}, {
+					"text": "数据库binlog监控",
+					"i18n": "binlog_monitor",
+					"icon": "icon-rocket",
+					"reuse":true,
+					"children": [
+						{
+							"text": "数据表管理",
+							"link": "/binlog/table",
+							"i18n": "binlog_table_manage",
+							"reuse":true
+						},
+						{
+							"text": "数据库管理",
+							"link": "/binlog/database",
+							"i18n": "binlog_database_manage",
+							"reuse":true
+						}
+					]
+				}, {
+					"text": "中台缓存刷新监控",
+					"i18n": "cache_refresh_monitor",
+					"icon": "icon-disc",
+					"link": "/cache_refresh_monitor",
+					"children": []
+				}, {
+					"text": "消息中心",
+					"i18n": "mq",
+					"icon": "icon-bell",
+					"link": "/mq",
+					"children": [
+						{
+							"text":"DUBBO消费端",
+							"link":"/mq/consumer_dubbo",
+							"i18n":"mq_consumer_dubbo",
+							"reuse":true
+						},
+						{
+							"text":"HTTP消费端",
+							"link":"/mq/consumer_http",
+							"i18n":"mq_consumer_http",
+							"reuse":true
+						},
+						{
+							"text":"Topic管理",
+							"link":"/mq/topic",
+							"i18n":"mq_topic",
+							"reuse":true
+						},
+						{
+							"text":"Topic统计快照",
+							"link":"/mq/topic_snapshot",
+							"i18n":"mq_topic_snapshot",
+							"reuse":true
+						},
+						{
+							"text":"Message明细",
+							"link":"/mq/message_detail",
+							"i18n":"mq_message_detail",
+							"reuse":true
+						}
+					]
+				}, {
+					"text": "邮件预警",
+					"i18n": "mail_alert",
+					"link": "/mail_alert",
+					"icon": "icon-exclamation",
+					"children":[
+						{
+							"text": "分布式链路监控",
+							"link": "/mail_alert/apm",
+							"i18n": "mail_alert_apm"
+						},
+						{
+							"text": "消息中心",
+							"link": "/mail_alert/mq",
+							"i18n": "mail_alert_mq"
+						}
+					]
+				}
+			]
+		}
+	]
+}

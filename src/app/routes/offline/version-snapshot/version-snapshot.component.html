@@ -1,0 +1,64 @@
+<nz-card [nzBordered]="false" *ngIf="showSQLScript">
+	<nz-form-item>
+		<nz-form-control [nzSpan]="24">
+			<textarea [(ngModel)]="ddlSQL" nz-input rows="20" placeholder="write a ddl sql"></textarea>
+		</nz-form-control>
+	</nz-form-item>
+	<button nz-button [nzType]="'primary'" (click)="runSQL()" [disabled]="ddlSQL==null">提交</button>
+	<button nz-button [nzType]="'primary'" (click)="returnHome()">返回版本快照页</button>
+</nz-card>
+<nz-card [nzBordered]="false" *ngIf="!showSQLScript">
+	<form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form">
+		<nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+			<nz-col nzMd="8" nzSm="24">
+				<nz-form-item>
+					<nz-form-label nzFor="shop_name_search_key">门店名</nz-form-label>
+					<nz-form-control>
+						<input [(ngModel)]='q.shop_name_search_key' name='shop_name_search_key' nz-input id="shop_name_search_key">
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col nzMd="8" nzSm="24">
+				<nz-form-item>
+					<nz-form-label nzFor="sub_unit_num_id">门店编号</nz-form-label>
+					<nz-form-control>
+						<input [(ngModel)]='q.sub_unit_num_id' name='sub_unit_num_id' nz-input id="sub_unit_num_id">
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+
+			<nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+				<nz-form-item>
+					<nz-form-label nzFor="table_name_search_key">表名</nz-form-label>
+					<nz-form-control>
+						<input [(ngModel)]='q.table_name_search_key' name='table_name_search_key' nz-input id="table_name_search_key">
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+
+			<nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+				<nz-form-item>
+					<nz-form-label nzFor="version_change">版本差异</nz-form-label>
+					<nz-form-control>
+						<input [(ngModel)]='q.version_change' name='version_change' nz-input id="version_change">
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+			<nz-col [nzSpan]="expandForm ? 24 : 8" [class.text-right]="expandForm">
+				<button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+				<button nz-button type="reset" class="mx-sm">重置</button>
+				<a (click)="expandForm=!expandForm">
+					{{expandForm ? '收起' : '展开'}}
+					<i class="anticon" [class.anticon-down]="!expandForm" [class.anticon-up]="expandForm"></i>
+				</a>
+			</nz-col>
+		</nz-row>
+	</form>
+	<div class="my-md">
+		<button nz-button (click)="jumpToSQLScript()" [nzType]="'primary'">
+		    <i class="anticon anticon-plus"></i>
+		    <span>执行DDL语句</span>
+		</button>
+	</div>
+	<simple-table #st [data]="data" [total]="total" (change)="onChange()" [frontPagination]=false [showPagination]=true [columns]="columns"></simple-table>
+</nz-card>
