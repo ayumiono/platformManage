@@ -1,0 +1,17 @@
+<nz-card [nzBordered]="false">
+	<form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form">
+		<nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+			<nz-col nzMd="8" nzSm="24">
+				<nz-form-item>
+					<nz-form-label nzFor="db_type">系统</nz-form-label>
+					<nz-form-control>
+						<nz-select [(ngModel)]="q.db_type" name="db_type" id="db_type" [nzPlaceHolder]="'请选择数据库'">
+						</nz-select>
+					</nz-form-control>
+				</nz-form-item>
+			</nz-col>
+		</nz-row>
+	</form>
+	<simple-table #st (change)="onChange()" [frontPagination]=false [showPagination]=true [data]="data" [total]="total" [columns]="columns">
+	</simple-table>
+</nz-card>
