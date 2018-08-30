@@ -23,6 +23,7 @@ import { I18NService } from '@core/i18n/i18n.service';
 // @delon/form: JSON Schema form
 import { JsonSchemaModule } from '@shared/json-schema/json-schema.module';
 
+import { ThirdPartComponents } from './third-part-component/components.module';
 
 // 加载i18n语言文件
 export function I18nHttpLoaderFactory(http: HttpClient) {
@@ -55,7 +56,8 @@ export function StartupServiceFactory(startupService: StartupService): Function 
       },
     }),
     // JSON-Schema form
-    JsonSchemaModule
+    JsonSchemaModule,
+    ThirdPartComponents,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'zh-Hans' },

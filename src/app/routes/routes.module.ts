@@ -21,6 +21,9 @@ import { OfflineVersionSnapshotComponent } from './offline/version-snapshot/vers
 import { OfflineSchemeComponent } from './offline/scheme/scheme.component';
 import { OfflineShopComponent } from './offline/shop/shop.component';
 import { TopicSnapshotComponent } from './mq/topic/snapshot.component';
+import { TraceComponent } from './asm/trace/trace.component';
+
+import { AgGridModule } from 'ag-grid-angular';
 
 const COMPONENTS = [
   OfflineDeployProgressComponent,
@@ -30,6 +33,7 @@ const COMPONENTS = [
   OfflineSchemeComponent,
   OfflineShopComponent,
   TopicSnapshotComponent,
+  TraceComponent,
   // passport pages
   UserLoginComponent,
   UserRegisterComponent,
@@ -44,7 +48,7 @@ const COMPONENTS = [
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({
-  imports: [ SharedModule, RouteRoutingModule ],
+  imports: [ SharedModule, RouteRoutingModule,AgGridModule.withComponents([]) ],
   declarations: [
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT

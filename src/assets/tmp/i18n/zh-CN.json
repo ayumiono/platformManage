@@ -36,6 +36,7 @@
   "mail_alert":"邮件预警",
   "mail_alert_apm":"分布式链路",
   "mail_alert_mq":"消息中心",
+  "apm_trace":"trace快照",
   "main_navigation": "主导航",
   "component": "组件",
   "style": "样式",

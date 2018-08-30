@@ -120,6 +120,18 @@
 							"i18n": "mail_alert_mq"
 						}
 					]
+				},
+				{
+					"text":"APM",
+					"i18n":"APM",
+					"link":"/apm",
+					"children":[
+						{
+							"text":"trace快照",
+							"link":"/apm/trace",
+							"i18n":"apm_trace"
+						}
+					]
 				}
 			]
 		}

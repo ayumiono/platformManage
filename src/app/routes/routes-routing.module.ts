@@ -24,7 +24,7 @@ import { OfflineVersionSnapshotComponent } from './offline/version-snapshot/vers
 import { OfflineSchemeComponent } from './offline/scheme/scheme.component';
 import { OfflineShopComponent } from './offline/shop/shop.component';
 import { TopicSnapshotComponent } from './mq/topic/snapshot.component';
-
+import { TraceComponent } from './asm/trace/trace.component';
 
 const routes: Routes = [
   {
@@ -41,6 +41,7 @@ const routes: Routes = [
     	{ path: 'offline/scheme', component:OfflineSchemeComponent, data: { title:'离线同步表管理', titleI18n:'scheme_setting'}},
     	{ path: 'offline/shop', component:OfflineShopComponent, data: {title:'门店信息', titleI18n:'shop_info'}},
     	{ path: 'mq/topic_snapshot',  component:TopicSnapshotComponent, data: {title:'Topic统计快照', titleI18n:'mq_topic_snapshot'}},
+    	{ path: 'apm/trace', component:TraceComponent, data:{title:'trace快照',titleI18n:'apm_trace'}},
     ]
   },
   // 全屏布局
