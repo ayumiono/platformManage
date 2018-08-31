@@ -176,7 +176,53 @@ const trace = [{
 	}]
 }]
 
+const dataTemplate = [
+	{
+		"spanId":9898,
+		"tspanEventList":[
+			{
+				"sequence":1,
+				"parentSequence":0
+			},
+			{
+				"sequence":3,
+				"parentSequence":2,
+				"nextSpanId":2
+			},
+			{
+				"sequence":2,
+				"parentSequence":0
+			},
+			{
+				"sequence":4,
+				"parentSequence":0
+			},
+			{
+				"sequence":0
+			}
+		]
+	},
+	{
+		"spanId":-7675,
+		"parentSpanId":9898,
+		"tspanEventList":[
+			{
+				"sequence":2,
+				"parentSequence":0
+			},
+			{
+				"sequence":1,
+				"parentSequence":0
+			},
+			{
+				"sequence":0
+			}
+		]
+	}
+]
+
 export const TRACE = {
 	'GET /trace/:transactionId': trace,
-	'GET /traces': traceList
+	'GET /traces': traceList,
+	'GET /treedata' : dataTemplate
 };

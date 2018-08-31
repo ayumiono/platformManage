@@ -125,6 +125,7 @@
 					"text":"APM",
 					"i18n":"APM",
 					"link":"/apm",
+					"icon": "icon-vector",
 					"children":[
 						{
 							"text":"trace快照",

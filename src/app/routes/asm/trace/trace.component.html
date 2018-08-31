@@ -1,5 +1,12 @@
 <nz-card [nzBordered]="false">
 	<simple-table #st [data]="traces" [ps]="3" [columns]="columns">
+		<ng-template st-row="tagRender" let-item let-index="index" let-column="column">
+			<nz-tag *ngIf="item.err" [nzColor]="'#f5222d'">error</nz-tag>
+			<nz-tag *ngIf="item.timeout" [nzColor]="'#ffa39e'">timeout</nz-tag>
+			<nz-tag *ngIf="item.txc" [nzColor]="'#d3adf7'" (click)="navigateTxc(item.txc.txc_id)">txc</nz-tag>
+			<nz-tag *ngIf="item.dubbo" [nzColor]="'#ffe58f'">dubbo</nz-tag>
+			<nz-tag *ngIf="item.mysql" [nzColor]="'#91d5ff'">mysql</nz-tag>
+		</ng-template>
 		<ng-template #expand let-item let-index="index" let-column="column">
             <ag-grid-angular style="width: 100%; height: 450px;"
 			class="ag-theme-balham"

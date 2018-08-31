@@ -7,6 +7,8 @@ import {
 	SimpleTableData,
 } from '@delon/abc';
 
+import { NzMessageService } from 'ng-zorro-antd';
+
 @Component({
 	selector: 'apm-trace-panel',
 	templateUrl: './trace.component.html',
@@ -16,21 +18,19 @@ export class TraceComponent {
 	@ViewChild('st') st: SimpleTableComponent;
 	traces: any[];
 	total: number;
-
 	columns: SimpleTableColumn[] = [{
 			title: "traceId",
 			index: "transactionId"
 		},
 		{
 			title: "时间",
-			render: "startTime"
+			index: "startTime"
 		},
 		{
-			title: "异常",
-			index: "err"
+			title:"标签",
+			render:"tagRender"
 		}
 	];
-
 	traceCache: any = {};
 
 	private gridApi;
@@ -44,65 +44,8 @@ export class TraceComponent {
 		"mysql": "data.serviceType == 2100 || data.serviceType == 2101",
 		"local_method": "!data.serviceType"
 	};
-
-	extractArg(params) {
-		var data = params.data;
-		if(data.serviceType == 1110) {
-			for(let annotation of data.annotations) {
-				if(annotation.key == 90) {
-					return annotation.value;
-				}
-			}
-		} else if(data.serviceType == 2100 || data.serviceType == 2101) {
-			for(let annotation of data.annotations) {
-				if(annotation.key == 21) {
-					return annotation.value;
-				}
-			}
-		} else {
-			for(let annotation of data.annotations) {
-				if(annotation.key == 904) {
-					return annotation.value;
-				}
-			}
-		}
-	}
-
-	extractMethod(params) {
-		var data = params.data;
-		if(data.serviceType == 1110) {
-			return data.rpc;
-		}
-		for(let annotation of data.annotations) {
-			if(annotation.key == 12) {
-				return annotation.value;
-			}
-		}
-	}
-
-	extractType(params) {
-		var data = params.data;
-		if(data.serviceType == 1110) {
-			return "DUBBO Prov";
-		} else if(data.serviceType == 5000) {
-			return "本地方法";
-		} else if(data.serviceType == 2100 || data.serviceType == 2101) {
-			return "MYSQL";
-		} else {
-			return "未知组件";
-		}
-	}
-
-	extractElapsed(params) {
-		var data = params.data;
-		if(data.spanId) {
-			return data.elapsed;
-		} else {
-			return data.endElapsed;
-		}
-	}
-
-	private columnDefs = [{
+	
+	columnDefs = [{
 			headerName: "方法",
 			valueGetter: this.extractMethod,
 			cellRenderer: "agGroupCellRenderer"
@@ -135,11 +78,7 @@ export class TraceComponent {
 			field: 'execPercentage'
 		},
 		{
-			headerName: '类',
-			field: 'className'
-		},
-		{
-			headerName: '类别',
+			headerName: '服务类别',
 			valueGetter: this.extractType
 		},
 		{
@@ -152,6 +91,80 @@ export class TraceComponent {
 		},
 	];
 
+	/**
+	 * 抽取参数
+	 */
+	extractArg(params) {
+		var data = params.data;
+		if(data.serviceType == 1110) {
+			for(let annotation of data.annotations) {
+				if(annotation.key == 90) {
+					return annotation.value;
+				}
+			}
+		} else if(data.serviceType == 2100 || data.serviceType == 2101) {
+			for(let annotation of data.annotations) {
+				if(annotation.key == 21) {
+					return annotation.value;
+				}
+			}
+		} else {
+			for(let annotation of data.annotations) {
+				if(annotation.key == 904) {
+					return annotation.value;
+				}
+			}
+		}
+	}
+
+	/**
+	 * 抽取方法名
+	 */
+	extractMethod(params) {
+		var data = params.data;
+		if(data.serviceType == 1110) {
+			return data.rpc;
+		}
+		for(let annotation of data.annotations) {
+			if(annotation.key == 12) {
+				return annotation.value;
+			}
+		}
+	}
+
+	/**
+	 * 抽取节点类型
+	 */
+	extractType(params) {
+		var data = params.data;
+		if(data.serviceType == 1110) {
+			return "Dubbo Provider";
+		}else if(data.serviceType == 9110){
+			return "Dubbo Consumer";
+		} else if(data.serviceType == 5000) {
+			return "本地方法";
+		} else if(data.serviceType == 2100 || data.serviceType == 2101) {
+			return "MYSQL";
+		} else {
+			return "未知组件";
+		}
+	}
+
+	/**
+	 * 抽取耗时
+	 */
+	extractElapsed(params) {
+		var data = params.data;
+		if(data.spanId) {
+			return data.elapsed;
+		} else {
+			return data.endElapsed;
+		}
+	}
+
+	/**
+	 * 进度条渲染
+	 */
 	progressBarRender(params) {
 		var value = params.value;
 		console.log("progressBarRender:"+value);
@@ -171,6 +184,9 @@ export class TraceComponent {
 		return html;
 	}
 
+	/**
+	 * 时间戳format
+	 */
 	timestampValueFormatter(params) {
 		var d = new Date(params.value);
 		var dateStr = d.getFullYear() + "-" +
@@ -183,25 +199,92 @@ export class TraceComponent {
 		return dateStr;
 	}
 
+	/**
+	 * 获取trace列表
+	 */
 	getTracesData() {
 		this.http.get('/traces').subscribe(
 			(res: any) => {
 				this.total = res.total;
 				this.traces = res.result;
-				this.traces.forEach((res) => {
-					this.getRowData(res.transactionId);
+				this.traces.forEach((row) => {
+					//mock tag
+					row.dubbo = 1;
+					row.err = {};
+					row.timeout = 1;
+					row.mysql = 1;
+					row.txc = {txc_id:11111};
+					this.getData(row);
 				})
 			}
 		);
+		this.http.get('/treedata').subscribe(
+			(res:any) => {
+				
+			}
+		)
 	}
+	
+	/**
+	 * 获取span链路数据
+	 */
+	getData(trace) {
+		this.http.get("/trace/" + trace.transactionId).subscribe(
+			(res: any) => {
+				//清洗数据,并整理trace标签
+//				this.sortData(res);
+				res.forEach((row) => {
+					row.participants = row.tspanEventList;
+					delete row.tspanEventList;
+				});
+				this.traceCache.transactionId = res;
+			}
+		);
+	}
+	
+	/**
+	 * 跳转到txc页面
+	 */
+	navigateTxc(txc_id){
+		this.msg.success("txc tag clicked");
+	}
+	
+	sortData(trace){
+		trace.tspanEventList.sort(function(eventa,eventb){
+			return eventa.sequence - eventb.sequence;
+		});
+	}
+	
+	/**
+	 * 数据清洗(可以放在服务端做)
+	 * 构造树型结构;txc,err,dubbo,mysql打标签
+	 */
+	dataCleaning(tspanEventList, participants, tspan) {
+		if(!tspan) {
+			tspan = tspanEventList[0];
+			participants.push(tspan);
+			this.dataCleaning(tspanEventList, tspan.participants, tspan);
+		}else{
+			for(let i of tspanEventList) {
+				if(i.parentSequence == tspan.sequence) {
+					participants.push(i);
+					this.dataCleaning(tspanEventList, i.participants, i);
+				}
+			}
+			return;
+		}
+ 	}
 
-	constructor(private http: _HttpClient) {
+	constructor(
+		private http: _HttpClient,
+		private msg:NzMessageService,
+	) {
 		this.getTracesData();
 		this.getNodeChildDetails = function getNodeChildDetails(rowItem) {
 			if(rowItem.participants) {
 				return {
 					group: true,
-					expanded: rowItem.group === "Group C",
+					expanded: true,
 					children: rowItem.participants,
 					key: rowItem.group
 				};
@@ -209,13 +292,6 @@ export class TraceComponent {
 				return null;
 			}
 		};
-	}
-
-	getRowData(transactionId) {
-		if(!this.traceCache.transactionId) {
-			this.getData(transactionId);
-		}
-		return this.traceCache.transactionId;
 	}
 
 	onTextboxFilterChanged() {
@@ -227,18 +303,5 @@ export class TraceComponent {
 		this.gridApi = params.api;
 		this.gridColumnApi = params.columnApi;
 		params.api.sizeColumnsToFit();
-	}
-
-	getData(transactionId) {
-		console.log("getData invoked");
-		this.http.get("/trace/" + transactionId).subscribe(
-			(res: any) => {
-				res.forEach((row) => {
-					row.participants = row.tspanEventList;
-					delete row.tspanEventList;
-				});
-				this.traceCache.transactionId = res;
-			}
-		);
 	}
 }
